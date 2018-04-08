@@ -1,0 +1,134 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>首页</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body style="width: 100%; height: 100%; background-color: #ededef;">
+
+  <div class="layui-fluid" id="LAY-component-grid-speed-dial">
+    <div class="layui-row layui-col-space1">
+      <div class="layui-col-xs8">
+        <div class="layui-card">
+          <div class="layui-card-header">实时地图监控
+            <button class="layui-btn layui-btn-sm layui-btn-primary" id="fullscreenBtn">
+              <i class="layui-icon">&#x1002;</i>全屏
+            </button>
+          </div>
+          <div class="layui-card-body" style="height: 450px;">
+            <div id="container" tabindex="0" style="height: 100%; margin: 0; width: 600px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="/static/layuiadmin/layui/layui.js?t=1"></script>
+  <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.4&key=d8aeb96e06c06b68cc6c5ca90b68d34a"></script>
+  <script src="//webapi.amap.com/ui/1.0/main.js"></script>
+
+  <script>
+
+  layui.config({
+    base: '/static/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'fullscreen'], function() {
+    var $ = layui.$
+    ,fullscreen = layui.fullscreen
+    ,admin = layui.admin;
+
+    AMapUI.setDomLibrary($);
+
+    $('#fullscreenBtn').on('click', function () {
+      fullscreen.open();
+    })
+
+    var map = new AMap.Map('container',{
+      resizeEnable: true,
+      zoom: 10,
+      center: [113.972976,22.534607]
+    });
+
+    var marker = new AMap.Marker({
+        title: '祥祺花园',
+        position: [113.966872,22.54152],
+        content: '<img style="display:inline-block; width:40px; height:40px; border-radius: 50%;" src="http://wx.qlogo.cn/mmhead/PiajxSqBRaEJFP4R0YokI69bibYqmEho06bnYcdWlqQ6fDdSye2YoNWg/0">'
+    });
+    marker.setMap(map);
+
+    function initPage(DistrictExplorer) {
+       //创建一个实例
+       var districtExplorer = new DistrictExplorer({
+          map: map //关联的地图实例
+       });
+
+       var adcode = 100000; //全国的区划编码
+
+       districtExplorer.loadAreaNode(adcode, function(error, areaNode) {
+
+          if (error) {
+             console.error(error);
+             return;
+          }
+
+          //绘制载入的区划节点
+          renderAreaNode(districtExplorer, areaNode);
+       });
+    }
+
+    function renderAreaNode(districtExplorer, areaNode) {
+
+       //清除已有的绘制内容
+       districtExplorer.clearFeaturePolygons();
+
+       //just some colors
+       var colors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00"];
+
+       //绘制子级区划
+       districtExplorer.renderSubFeatures(areaNode, function(feature, i) {
+
+          var fillColor = colors[i % colors.length];
+          var strokeColor = colors[colors.length - 1 - i % colors.length];
+
+          return {
+             cursor: 'default',
+             bubble: true,
+             strokeColor: strokeColor, //线颜色
+             strokeOpacity: 1, //线透明度
+             strokeWeight: 1, //线宽
+             fillColor: fillColor, //填充色
+             fillOpacity: 0.35, //填充透明度
+          };
+       });
+
+       //绘制父级区划，仅用黑色描边
+       districtExplorer.renderParentFeature(areaNode, {
+          cursor: 'default',
+          bubble: true,
+          strokeColor: 'black', //线颜色
+          fillColor: null,
+          strokeWeight: 3, //线宽
+       });
+
+       //更新地图视野以适合区划面
+       map.setFitView(districtExplorer.getAllFeaturePolygons());
+    }
+
+    AMapUI.loadUI(['geo/DistrictExplorer'], function(DistrictExplorer) {
+       //启动页面
+       initPage(DistrictExplorer);
+    });
+  });
+  </script>
+</body>
+</html>
+
