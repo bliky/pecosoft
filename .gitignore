@@ -4,3 +4,4 @@ composer.lock
 runtime
 json
 .DS_Store
+*.php.pid

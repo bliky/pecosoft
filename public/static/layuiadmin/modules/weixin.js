@@ -22,7 +22,6 @@ layui.define(['admin', 'table', 'util'], function(exports){
     ,page: true
     ,cols: [[
       {type: 'numbers', title: '序号', width: 60}
-      ,{field: 'user_id', title: 'ID', width: 80}
       ,{field: 'avatar', title: '头像', width: 100, templet: '<div style=“overflow: hidden;”><img style="width: 80px; height:80px; object-fit: cover;" src="{{d.avatar}}"></div>'}
       ,{field: 'nickname', title: '昵称', width: 280}
       ,{field: 'openid', title: 'OPENID', minWidth: 200}
