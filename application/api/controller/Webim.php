@@ -46,6 +46,10 @@ class Webim extends Controller
     	$user_id = $request->param('uid') ? : 0;
     	$group_id = $request->param('gid') ? : 0;
     	$message = $request->param('msg') ? : '';
+        
+        $message = json_decode($message, true);
+        $message['time'] = time();
+        $message = json_encode($message);
 
     	$user_id && Gateway::sendToUid($user_id, $message);
     	$group_id && Gateway::sendToGroup($group_id, $message);

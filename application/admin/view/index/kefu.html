@@ -21,14 +21,11 @@
   }).use(['index', 'webim'], function(){
     var $ = layui.$;
     var webim = layui.webim;
-    webim.onchat = function (chat) {
-      console.log('chat', chat);
-    }
+
     webim.onpush = function (push) {
       console.log('push', push);
     }
-    webim.init(1, function (u, c) {
-      console.log(u, c);
+    webim.init("{$user_id}", function (u, c) {
     });
     webim.kefu();
   });

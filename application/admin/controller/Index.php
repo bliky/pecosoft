@@ -30,7 +30,10 @@ class Index extends Controller
 
 	      	return $this->redirect($login_url, 302);
 	    }
-	}
+
+      $this->assign('name', $cookies->get('employee_name')?:'admin');
+      $this->assign('user_id', $cookies->get('user_id'));
+    }
 
     return $this->fetch($mod);
   }
