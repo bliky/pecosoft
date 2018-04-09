@@ -24,21 +24,38 @@ layui.define(['layim'], function(exports){
         switch(type) {
           case 'init' :
             $.post('/webim/bind', {uid: user_id, client_id: client_id}, function(res) {
-              cb(user_id, client_id);
+              $.post('/webim/join', {gid: 100, client_id: client_id}, function(res) {
+                cb(user_id, client_id);
+              }, 'json');
             }, 'json');
             break;
           case 'chat' :
-            var chat = data.chat;
-            var msg = {
-              username: chat.mine.username
-              ,avatar: chat.mine.avatar
-              ,id: chat.mine.id
-              ,type: chat.to.type
-              ,content: chat.mine.content
-              ,mine: false
-              ,fromid: chat.mine.id
-              ,timestamp: data.time * 1000
-            };
+            var chat = data.chat,
+                chat_type = chat.to.type,
+                msg;
+            if (chat_type === 'group') {
+              msg = {
+                username: chat.mine.username
+                ,avatar: chat.mine.avatar
+                ,id: chat.to.id
+                ,type: chat_type
+                ,content: chat.mine.content
+                ,mine: false
+                ,fromid: chat.mine.id
+                ,timestamp: data.time * 1000
+              };
+            } else {
+              msg = {
+                username: chat.mine.username
+                ,avatar: chat.mine.avatar
+                ,id: chat.mine.id
+                ,type: chat_type
+                ,content: chat.mine.content
+                ,mine: false
+                ,fromid: chat.mine.id
+                ,timestamp: data.time * 1000
+              };
+            }
             layim.getMessage(msg);
             webim.onchat && webim.onchat(chat, data.time);
             break;
@@ -65,7 +82,13 @@ layui.define(['layim'], function(exports){
       });
 
       layim.on('sendMessage', function(res){
-        webim.send(res.to.id, 0, {type:'chat', chat:res});
+        webim.onsend && webim.onsend(res);
+        var type = res.to.type;
+        if (type == "group") {
+          webim.send(0, res.to.id, {type:'chat', chat:res});
+        } else {
+          webim.send(res.to.id, 0, {type:'chat', chat:res});
+        }
       })
     },
     send: function (uid, gid, msg) {

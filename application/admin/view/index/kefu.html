@@ -21,7 +21,12 @@
   }).use(['index', 'webim'], function(){
     var $ = layui.$;
     var webim = layui.webim;
-
+    webim.onsend = function (res) {
+      console.log('发送消息', res);
+    }
+    webim.onchat = function (chat, time) {
+      console.log(chat, time);
+    }
     webim.onpush = function (push) {
       console.log('push', push);
     }
