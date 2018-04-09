@@ -13,7 +13,9 @@ layui.define(['layim'], function(exports){
         $ = layui.$;
 
   var webim = {
+    id: 0,
     init: function (user_id, cb) {
+      this.id = user_id;
       var socket = new WebSocket('ws://www.pecosoft.com:8282');
       socket.onopen = function () {
       }
@@ -40,10 +42,11 @@ layui.define(['layim'], function(exports){
                 ,id: chat.to.id
                 ,type: chat_type
                 ,content: chat.mine.content
-                ,mine: false
+                ,mine: chat.mine.id == webim.id
                 ,fromid: chat.mine.id
                 ,timestamp: data.time * 1000
               };
+              if (!msg.mine) layim.getMessage(msg);
             } else {
               msg = {
                 username: chat.mine.username
@@ -55,8 +58,9 @@ layui.define(['layim'], function(exports){
                 ,fromid: chat.mine.id
                 ,timestamp: data.time * 1000
               };
+              layim.getMessage(msg);
             }
-            layim.getMessage(msg);
+            
             webim.onchat && webim.onchat(chat, data.time);
             break;
           case 'push' :
