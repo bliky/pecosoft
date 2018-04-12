@@ -26,6 +26,7 @@ Route::get('admin$', 'admin/Index/index');
 Route::get('admin/:mod$','admin/Index/module');
 
 Route::controller('login','api/Login');
+Route::controller('export','api/Export');
 
 return [
 
