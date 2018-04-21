@@ -122,6 +122,22 @@
         handleGetCurrentPos: function () {
           this.geolocation.getCurrentPosition()
         },
+        loadMarkers: function () {
+          var that = this
+          this.$http.get('/map_marker').then(res => {
+            var markers = res.body.data
+            for (var i=0; i<markers.length; i++) {
+              var marker = markers[i];
+              new AMap.Marker({
+                map: that.map,
+                position: [marker.lng, marker.lat],
+                title: marker.des,
+                label: {content: marker.name, offset: AMap.Pixel(10,20)},
+                animation: 'AMAP_ANIMATION_DROP'
+              });
+            }
+          });
+        },
         saveMarker: function () {
           this.$http.post('/map_marker', {name: this.markerName, des: this.markerDes, lng: this.currentPos.longitude, lat:this.currentPos.latitude}).then(res => {
             //this.someData = res.body;
@@ -187,6 +203,8 @@
             });
             that.markerPos = e.lnglat.toString()
           });
+
+          that.loadMarkers();
         }
       },
       mounted: function () {

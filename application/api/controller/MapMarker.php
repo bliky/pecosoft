@@ -15,7 +15,10 @@ class MapMarker extends Controller
      */
     public function index()
     {
-        //
+        $data = MapMarkerModel::field('id,name,description as des,lng,lat')->select();
+        $count = MapMarkerModel::count();
+
+        return rest_resp($data, $count);
     }
 
     /**
