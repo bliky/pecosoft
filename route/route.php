@@ -25,6 +25,10 @@ Route::resource('user','api/User');
 Route::get('admin$', 'admin/Index/index');
 Route::get('admin/:mod$','admin/Index/module');
 
+Route::resource('map_marker','api/MapMarker');
+
+Route::get('tool/:tool$','index/Index/tool');
+
 Route::controller('login','api/Login');
 Route::controller('export','api/Export');
 

@@ -13,6 +13,10 @@ class Index extends Controller
   {
     return $this->fetch();
   }
+  public function tool ($tool)
+  {
+    return $this->fetch($tool);
+  }
 
   public function db_fankui() {
     // customer_consult
